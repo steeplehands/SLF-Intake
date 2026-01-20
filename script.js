@@ -1,6 +1,6 @@
 /* =========================
    Singleton Intake Widget
-   script.js (fixed: preserves back arrow + centered messages)
+   Chat-Style Version
    ========================= */
 
 // -------------------------
@@ -15,37 +15,28 @@ const formData = {
   email: ""
 };
 
-let currentStep = 1;
+let currentStep = 0;
 let isSpanish = false;
 
 // -------------------------
-// DOM
+// DOM Elements
 // -------------------------
 const video = document.getElementById("bgVideo");
-
 const playPauseBtn = document.getElementById("playPauseBtn");
 const playIcon = document.getElementById("playIcon");
 const pauseIcon = document.getElementById("pauseIcon");
-
 const muteBtn = document.getElementById("muteBtn");
 const mutedIcon = document.getElementById("mutedIcon");
 const unmutedIcon = document.getElementById("unmutedIcon");
 const muteIndicator = document.getElementById("muteIndicator");
-
 const refreshBtn = document.getElementById("refreshBtn");
 const langBtn = document.getElementById("langBtn");
-
 const launcher = document.getElementById("intakeLauncher");
 const tooltip = document.getElementById("intakeTooltip");
 const widget = document.getElementById("intakeWidget");
 const closeBtn = document.getElementById("intakeClose");
-
-const descriptionEl = document.getElementById("description");
-const firstNameEl = document.getElementById("firstName");
-const lastNameEl = document.getElementById("lastName");
-const phoneEl = document.getElementById("phone");
-const emailEl = document.getElementById("email");
-const finalSubmitBtn = document.getElementById("finalSubmit");
+const chatConversation = document.getElementById("chatConversation");
+const chatInputArea = document.getElementById("chatInputArea");
 
 // -------------------------
 // i18n (EN / ES)
@@ -55,67 +46,86 @@ const i18n = {
     tooltip: "How can I help you?",
     langBtnLabel: "Español",
 
-    step1Msg: "Hi 👋 Welcome to Singleton Law Firm. What kind of matter can we assist you with?",
-    step2Msg: "Could you briefly explain the situation for me?",
-    step3Msg: "This will be quick—what's your full name?",
-    step4Msg: "In case we get disconnected, can I have your phone number please?",
-    step5Msg: "And what's the best email to reach you at?",
+    greeting: "Hi 👋 Welcome to Singleton Law Firm. What kind of matter can we assist you with?",
+    askDescription: "Could you briefly explain the situation for me?",
+    askName: "This will be quick—what's your full name?",
+    askPhone: "In case we get disconnected, can I have your phone number please?",
+    askEmail: "And what's the best email to reach you at?",
 
-    // (kept for compatibility, even if you no longer show "Back" text)
-    back: "← Back",
-    continue: "Continue",
-    submit: "Submit",
-    submitting: "Submitting...",
+    descriptionPlaceholder: "Describe what happened...",
+    firstNamePlaceholder: "First Name",
+    lastNamePlaceholder: "Last Name",
+    phonePlaceholder: "(555) 555-5555",
+    emailPlaceholder: "your@email.com",
 
-    description_ph: "Describe what happened...",
-    firstName_ph: "First Name",
-    lastName_ph: "Last Name",
-    phone_ph: "(555) 555-5555",
-    email_ph: "your@email.com",
-
-    optCar: "Car Accident",
-    optMotorcycle: "Motorcycle Accident",
-    optTruck: "Truck Accident",
-    optWrongful: "Wrongful Death",
-    optBus: "Bus Accident",
-    optSlip: "Slip & Fall",
-    optPersonalInjury: "Personal Injury (All kinds)",
+    caseTypes: [
+      "Car Accident",
+      "Motorcycle Accident",
+      "Truck Accident",
+      "Wrongful Death",
+      "Bus Accident",
+      "Slip & Fall",
+      "Personal Injury",
+      "Other"
+    ],
 
     successTitle: "Thank You!",
-    successBody: "We've received your information. Someone from Singleton Law Firm will contact you shortly."
+    successBody: "We've received your information. Someone from Singleton Law Firm will contact you shortly.",
+
+    send: "Send"
   },
   es: {
     tooltip: "¿Cómo puedo ayudarte?",
     langBtnLabel: "English",
 
-    step1Msg: "Hola 👋 Bienvenido(a) a Singleton Law Firm. ¿En qué podemos ayudarte hoy?",
-    step2Msg: "¿Podrías explicar brevemente la situación?",
-    step3Msg: "Será rápido—¿cuál es tu nombre completo?",
-    step4Msg: "Por si nos desconectamos, ¿me das tu número de teléfono?",
-    step5Msg: "¿Y cuál es el mejor correo para contactarte?",
+    greeting: "Hola 👋 Bienvenido(a) a Singleton Law Firm. ¿En qué podemos ayudarte hoy?",
+    askDescription: "¿Podrías explicar brevemente la situación?",
+    askName: "Será rápido—¿cuál es tu nombre completo?",
+    askPhone: "Por si nos desconectamos, ¿me das tu número de teléfono?",
+    askEmail: "¿Y cuál es el mejor correo para contactarte?",
 
-    back: "← Atrás",
-    continue: "Continuar",
-    submit: "Enviar",
-    submitting: "Enviando...",
+    descriptionPlaceholder: "Describe lo ocurrido...",
+    firstNamePlaceholder: "Nombre",
+    lastNamePlaceholder: "Apellido",
+    phonePlaceholder: "(555) 555-5555",
+    emailPlaceholder: "tu@correo.com",
 
-    description_ph: "Describe lo ocurrido...",
-    firstName_ph: "Nombre",
-    lastName_ph: "Apellido",
-    phone_ph: "(555) 555-5555",
-    email_ph: "tu@correo.com",
-
-    optCar: "Accidente de auto",
-    optMotorcycle: "Accidente de motocicleta",
-    optTruck: "Accidente de camión",
-    optWrongful: "Muerte por negligencia",
-    optBus: "Accidente de autobús",
-    optSlip: "Caída / resbalón",
-    optPersonalInjury: "Lesiones personales (todo tipo)",
+    caseTypes: [
+      "Accidente de auto",
+      "Accidente de motocicleta",
+      "Accidente de camión",
+      "Muerte por negligencia",
+      "Accidente de autobús",
+      "Caída / resbalón",
+      "Lesiones personales",
+      "Otro"
+    ],
 
     successTitle: "¡Gracias!",
-    successBody: "Hemos recibido tu información. Alguien de Singleton Law Firm se pondrá en contacto contigo en breve."
+    successBody: "Hemos recibido tu información. Alguien de Singleton Law Firm se pondrá en contacto contigo en breve.",
+
+    send: "Enviar"
   }
+};
+
+// Case type mapping (for webhook - always send English)
+const caseTypeMap = {
+  "Car Accident": "Car Accident",
+  "Motorcycle Accident": "Motorcycle Accident",
+  "Truck Accident": "Truck Accident",
+  "Wrongful Death": "Wrongful Death",
+  "Bus Accident": "Bus Accident",
+  "Slip & Fall": "Slip & Fall",
+  "Personal Injury": "Personal Injury (All kinds)",
+  "Other": "Other",
+  "Accidente de auto": "Car Accident",
+  "Accidente de motocicleta": "Motorcycle Accident",
+  "Accidente de camión": "Truck Accident",
+  "Muerte por negligencia": "Wrongful Death",
+  "Accidente de autobús": "Bus Accident",
+  "Caída / resbalón": "Slip & Fall",
+  "Lesiones personales": "Personal Injury (All kinds)",
+  "Otro": "Other"
 };
 
 function t(key) {
@@ -123,162 +133,271 @@ function t(key) {
 }
 
 // -------------------------
-// Language helpers (preserve inline back arrow button)
+// Chat Functions
 // -------------------------
-function setMessagePreserveBack(el, text) {
-  if (!el) return;
+function scrollToBottom(extra = 0) {
+  if (chatConversation) {
+    setTimeout(() => {
+      chatConversation.scrollTop = chatConversation.scrollHeight + extra;
+    }, 50);
+  }
+}
 
-  // If your HTML uses the inline button inside the message bubble:
-  // <div class="message message-with-back" id="step2Msg">
-  //   <button class="back-arrow-inline">‹</button>
-  //   ...
-  // </div>
-  const backBtn = el.querySelector(".back-arrow-inline");
+function addBotMessage(text) {
+  const bubble = document.createElement("div");
+  bubble.className = "chat-bubble bot";
+  bubble.textContent = text;
+  chatConversation.appendChild(bubble);
+  scrollToBottom();
+}
 
-  // Clear without nuking the button reference
-  el.textContent = "";
+function showSuccessMessage() {
+  // Clear conversation and input area
+  chatConversation.innerHTML = "";
+  chatInputArea.innerHTML = "";
 
-  // Re-append button first, then text
-  if (backBtn) el.appendChild(backBtn);
-  el.appendChild(document.createTextNode(text));
+  // Create success message in input area (positioned at bottom)
+  chatInputArea.innerHTML = `
+    <div class="success-msg">
+      <div class="success-icon">✓</div>
+      <div class="success-title">${t("successTitle")}</div>
+      <div class="success-body">${t("successBody")}</div>
+    </div>
+  `;
+}
+
+function addUserMessage(text) {
+  const bubble = document.createElement("div");
+  bubble.className = "chat-bubble user";
+  bubble.textContent = text;
+  chatConversation.appendChild(bubble);
+  scrollToBottom();
+}
+
+function showTypingIndicator() {
+  const typing = document.createElement("div");
+  typing.className = "chat-bubble bot typing-bubble";
+  typing.innerHTML = `
+    <div class="typing-indicator">
+      <span></span><span></span><span></span>
+    </div>
+  `;
+  typing.id = "typingIndicator";
+  chatConversation.appendChild(typing);
+  scrollToBottom();
+}
+
+function removeTypingIndicator() {
+  const typing = document.getElementById("typingIndicator");
+  if (typing) typing.remove();
+}
+
+function addBotMessageWithDelay(text, delay = 800) {
+  showTypingIndicator();
+  setTimeout(() => {
+    removeTypingIndicator();
+    addBotMessage(text);
+  }, delay);
 }
 
 // -------------------------
-// Language apply
+// Input Area Rendering
 // -------------------------
-function applyLanguage() {
-  // Tooltip text (don’t overwrite emoji)
-  if (tooltip) {
-    const textSpan = tooltip.querySelector(".tooltip-text");
-    if (textSpan) textSpan.textContent = t("tooltip");
-    else tooltip.textContent = t("tooltip");
+function renderCaseTypeOptions() {
+  const caseTypes = t("caseTypes");
+  chatInputArea.innerHTML = `
+    <div class="chat-options">
+      ${caseTypes.map(type => `
+        <button class="chat-option-btn" type="button" data-case="${type}">${type}</button>
+      `).join("")}
+    </div>
+  `;
+
+  // Add click handlers
+  chatInputArea.querySelectorAll(".chat-option-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const caseType = btn.dataset.case;
+      formData.caseType = caseTypeMap[caseType] || caseType;
+      addUserMessage(caseType);
+      currentStep = 1;
+      proceedToNextStep();
+    });
+  });
+}
+
+function renderTextInput(placeholder, inputType = "text", isTextarea = false) {
+  const inputElement = isTextarea
+    ? `<textarea class="chat-input" id="chatInput" placeholder="${placeholder}" rows="2"></textarea>`
+    : `<input type="${inputType}" class="chat-input" id="chatInput" placeholder="${placeholder}">`;
+
+  chatInputArea.innerHTML = `
+    <div class="chat-input-row">
+      ${inputElement}
+      <button class="chat-send-btn" type="button" id="sendBtn">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+        </svg>
+      </button>
+    </div>
+  `;
+
+  const input = document.getElementById("chatInput");
+  const sendBtn = document.getElementById("sendBtn");
+
+  // Phone formatting
+  if (inputType === "tel") {
+    input.addEventListener("input", (e) => {
+      let v = e.target.value.replace(/\D/g, "").slice(0, 10);
+      if (v.length >= 6) v = "(" + v.slice(0, 3) + ") " + v.slice(3, 6) + "-" + v.slice(6);
+      else if (v.length >= 3) v = "(" + v.slice(0, 3) + ") " + v.slice(3);
+      e.target.value = v;
+    });
   }
 
-  // Language button label
-  if (langBtn) langBtn.textContent = t("langBtnLabel");
-
-  // Step messages (IMPORTANT: preserve back arrow button inside message bubbles)
-  const step1Msg = document.getElementById("step1Msg");
-  const step2Msg = document.getElementById("step2Msg");
-  const step3Msg = document.getElementById("step3Msg");
-  const step4Msg = document.getElementById("step4Msg");
-  const step5Msg = document.getElementById("step5Msg");
-
-  if (step1Msg) step1Msg.textContent = t("step1Msg");
-  setMessagePreserveBack(step2Msg, t("step2Msg"));
-  setMessagePreserveBack(step3Msg, t("step3Msg"));
-  setMessagePreserveBack(step4Msg, t("step4Msg"));
-  setMessagePreserveBack(step5Msg, t("step5Msg"));
-
-  // Continue buttons
-  const continue2 = document.getElementById("continue2");
-  const continue3 = document.getElementById("continue3");
-  const continue4 = document.getElementById("continue4");
-
-  if (continue2) continue2.textContent = t("continue");
-  if (continue3) continue3.textContent = t("continue");
-  if (continue4) continue4.textContent = t("continue");
-
-  // Final submit button (show correct label depending on disabled state)
-  if (finalSubmitBtn) {
-    finalSubmitBtn.textContent = finalSubmitBtn.disabled ? t("submitting") : t("submit");
-  }
-
-  // Placeholders
-  if (descriptionEl) descriptionEl.placeholder = t("description_ph");
-  if (firstNameEl) firstNameEl.placeholder = t("firstName_ph");
-  if (lastNameEl) lastNameEl.placeholder = t("lastName_ph");
-  if (phoneEl) phoneEl.placeholder = t("phone_ph");
-  if (emailEl) emailEl.placeholder = t("email_ph");
-
-  // Step 1 option labels (preserve radio circle span)
-  const optionIds = [
-    "optCar",
-    "optMotorcycle",
-    "optTruck",
-    "optWrongful",
-    "optBus",
-    "optSlip",
-    "optPersonalInjury"
-  ];
-
-  optionIds.forEach((id) => {
-    const btn = document.getElementById(id);
-    if (!btn) return;
-
-    const label = t(id);
-    const circle = btn.querySelector(".radio-circle");
-    if (circle) {
-      btn.innerHTML = "";
-      btn.appendChild(circle);
-      btn.appendChild(document.createTextNode(label));
-    } else {
-      btn.textContent = label;
+  // Enter key submission
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleInputSubmit();
     }
   });
 
-  // Success screen
-  const successTitle = document.getElementById("successTitle");
-  const successBody = document.getElementById("successBody");
+  sendBtn.addEventListener("click", handleInputSubmit);
+  input.focus();
+}
 
-  if (successTitle) successTitle.textContent = t("successTitle");
-  if (successBody) successBody.textContent = t("successBody");
+function renderNameInputs() {
+  chatInputArea.innerHTML = `
+    <div class="chat-multi-input">
+      <div class="chat-input-row">
+        <input type="text" class="chat-input" id="firstNameInput" placeholder="${t("firstNamePlaceholder")}">
+        <div class="send-btn-spacer"></div>
+      </div>
+      <div class="chat-input-row">
+        <input type="text" class="chat-input" id="lastNameInput" placeholder="${t("lastNamePlaceholder")}">
+        <button class="chat-send-btn" type="button" id="sendBtn">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  `;
+
+  const firstNameInput = document.getElementById("firstNameInput");
+  const lastNameInput = document.getElementById("lastNameInput");
+  const sendBtn = document.getElementById("sendBtn");
+
+  // Enter key navigation
+  firstNameInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      lastNameInput.focus();
+    }
+  });
+
+  lastNameInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleNameSubmit();
+    }
+  });
+
+  sendBtn.addEventListener("click", handleNameSubmit);
+  firstNameInput.focus();
+}
+
+function clearInputArea() {
+  chatInputArea.innerHTML = "";
 }
 
 // -------------------------
-// Helpers
+// Step Handlers
 // -------------------------
-function showStep(step) {
-  document.querySelectorAll(".step").forEach((s) => s.classList.remove("active"));
-  const target = document.getElementById("step" + step);
-  if (target) target.classList.add("active");
-  currentStep = step;
+function handleInputSubmit() {
+  const input = document.getElementById("chatInput");
+  if (!input) return;
 
-  // keep language correct as user advances (also preserves back buttons)
-  applyLanguage();
-}
+  const value = input.value.trim();
+  if (!value) return;
 
-function goBack(step) {
-  showStep(step);
-}
-
-function openWidget() {
-  if (!widget) return;
-  widget.classList.remove("is-hidden");
-
-  if (launcher) launcher.style.display = "none";
-  if (tooltip) tooltip.classList.add("is-hidden");
-
-  if (video && video.paused) video.play().catch(() => {});
-}
-
-function closeWidget() {
-  if (!widget) return;
-  widget.classList.add("is-hidden");
-
-  if (launcher) launcher.style.display = "grid";
-  if (tooltip) tooltip.classList.remove("is-hidden");
-}
-
-function resetForm() {
-  currentStep = 1;
-  Object.keys(formData).forEach((k) => (formData[k] = ""));
-
-  if (descriptionEl) descriptionEl.value = "";
-  if (firstNameEl) firstNameEl.value = "";
-  if (lastNameEl) lastNameEl.value = "";
-  if (phoneEl) phoneEl.value = "";
-  if (emailEl) emailEl.value = "";
-
-  if (finalSubmitBtn) {
-    finalSubmitBtn.disabled = false;
-    finalSubmitBtn.textContent = t("submit");
+  switch (currentStep) {
+    case 1: // Description
+      formData.description = value;
+      addUserMessage(value);
+      currentStep = 2;
+      proceedToNextStep();
+      break;
+    case 3: // Phone
+      formData.phone = value;
+      addUserMessage(value);
+      currentStep = 4;
+      proceedToNextStep();
+      break;
+    case 4: // Email
+      formData.email = value;
+      addUserMessage(value);
+      currentStep = 5;
+      submitForm();
+      break;
   }
-
-  showStep(1);
 }
 
-// Convert "(702) 555-1234" -> "+17025551234"
+function handleNameSubmit() {
+  const firstNameInput = document.getElementById("firstNameInput");
+  const lastNameInput = document.getElementById("lastNameInput");
+
+  if (!firstNameInput || !lastNameInput) return;
+
+  const firstName = firstNameInput.value.trim();
+  const lastName = lastNameInput.value.trim();
+
+  if (!firstName || !lastName) return;
+
+  formData.firstName = firstName;
+  formData.lastName = lastName;
+  addUserMessage(`${firstName} ${lastName}`);
+  currentStep = 3;
+  proceedToNextStep();
+}
+
+function proceedToNextStep() {
+  clearInputArea();
+
+  switch (currentStep) {
+    case 1: // Ask for description
+      addBotMessageWithDelay(t("askDescription"), 600);
+      setTimeout(() => {
+        renderTextInput(t("descriptionPlaceholder"), "text", true);
+      }, 700);
+      break;
+
+    case 2: // Ask for name
+      addBotMessageWithDelay(t("askName"), 600);
+      setTimeout(() => {
+        renderNameInputs();
+      }, 700);
+      break;
+
+    case 3: // Ask for phone
+      addBotMessageWithDelay(t("askPhone"), 600);
+      setTimeout(() => {
+        renderTextInput(t("phonePlaceholder"), "tel");
+      }, 700);
+      break;
+
+    case 4: // Ask for email
+      addBotMessageWithDelay(t("askEmail"), 600);
+      setTimeout(() => {
+        renderTextInput(t("emailPlaceholder"), "email");
+      }, 700);
+      break;
+  }
+}
+
+// -------------------------
+// Form Submission
+// -------------------------
 function toE164US(input) {
   const digits = (input || "").replace(/\D/g, "");
   if (!digits) return "";
@@ -287,41 +406,10 @@ function toE164US(input) {
   return `+${digits}`;
 }
 
-// -------------------------
-// Form flow handlers (used by inline onclick)
-// -------------------------
-function selectCaseType(type) {
-  formData.caseType = type;
-  showStep(2);
-}
-
-function submitDescription() {
-  formData.description = (descriptionEl ? descriptionEl.value : "").trim();
-  if (formData.description) showStep(3);
-}
-
-function submitName() {
-  formData.firstName = (firstNameEl ? firstNameEl.value : "").trim();
-  formData.lastName = (lastNameEl ? lastNameEl.value : "").trim();
-  if (formData.firstName && formData.lastName) showStep(4);
-}
-
-function submitPhone() {
-  formData.phone = (phoneEl ? phoneEl.value : "").trim();
-  if (formData.phone) showStep(5);
-}
-
 function submitForm() {
-  formData.email = (emailEl ? emailEl.value : "").trim();
-  if (!formData.email) return;
+  clearInputArea();
 
-  const webhookUrl =
-    "https://services.leadconnectorhq.com/hooks/auZVaoSosuyK3y7NwfVh/webhook-trigger/6b388f33-dc4d-40e0-90cc-af48f58b8562";
-
-  if (finalSubmitBtn) {
-    finalSubmitBtn.disabled = true;
-    finalSubmitBtn.textContent = t("submitting");
-  }
+  const webhookUrl = "https://services.leadconnectorhq.com/hooks/auZVaoSosuyK3y7NwfVh/webhook-trigger/6b388f33-dc4d-40e0-90cc-af48f58b8562";
 
   const payload = {
     firstName: formData.firstName,
@@ -338,38 +426,95 @@ function submitForm() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   })
-    .then(() => showStep(6))
+    .then(() => {
+      setTimeout(() => showSuccessMessage(), 500);
+    })
     .catch((err) => {
       console.error("Webhook error:", err);
-      showStep(6);
+      setTimeout(() => showSuccessMessage(), 500);
     });
 }
 
-// expose for inline onclick=""
-window.selectCaseType = selectCaseType;
-window.submitDescription = submitDescription;
-window.submitName = submitName;
-window.submitPhone = submitPhone;
-window.submitForm = submitForm;
-window.goBack = goBack;
+// -------------------------
+// Widget Control
+// -------------------------
+function openWidget() {
+  if (!widget) return;
+  widget.classList.remove("is-hidden");
+
+  if (launcher) launcher.style.display = "none";
+  if (tooltip) tooltip.classList.add("is-hidden");
+
+  if (video && video.paused) video.play().catch(() => {});
+
+  // Start conversation if empty
+  if (chatConversation && chatConversation.children.length === 0) {
+    startConversation();
+  }
+}
+
+function closeWidget() {
+  if (!widget) return;
+  widget.classList.add("is-hidden");
+
+  if (launcher) launcher.style.display = "grid";
+  if (tooltip) tooltip.classList.remove("is-hidden");
+}
+
+function startConversation() {
+  currentStep = 0;
+  chatConversation.innerHTML = "";
+
+  // Initial greeting
+  addBotMessage(t("greeting"));
+  renderCaseTypeOptions();
+}
+
+function resetForm() {
+  currentStep = 0;
+  Object.keys(formData).forEach(k => formData[k] = "");
+
+  if (chatConversation) chatConversation.innerHTML = "";
+  if (chatInputArea) chatInputArea.innerHTML = "";
+
+  startConversation();
+}
 
 // -------------------------
-// Event bindings
+// Language Toggle
+// -------------------------
+function applyLanguage() {
+  // Update tooltip
+  if (tooltip) {
+    const textSpan = tooltip.querySelector(".tooltip-text");
+    if (textSpan) textSpan.textContent = t("tooltip");
+  }
+
+  // Update language button
+  if (langBtn) langBtn.textContent = t("langBtnLabel");
+}
+
+// -------------------------
+// Event Bindings
 // -------------------------
 
-// Ensure widget starts hidden and tooltip shows
+// Ensure widget starts hidden
 if (widget) widget.classList.add("is-hidden");
 if (tooltip) tooltip.classList.remove("is-hidden");
 
-// Apply initial language (default English)
+// Apply initial language
 applyLanguage();
 
+// Launcher/tooltip click
 if (launcher) launcher.addEventListener("click", openWidget);
 if (tooltip) tooltip.addEventListener("click", openWidget);
 if (closeBtn) closeBtn.addEventListener("click", closeWidget);
 
+// Escape key to close
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && widget && !widget.classList.contains("is-hidden")) closeWidget();
+  if (e.key === "Escape" && widget && !widget.classList.contains("is-hidden")) {
+    closeWidget();
+  }
 });
 
 // Play/Pause
@@ -402,19 +547,15 @@ if (muteBtn && video && mutedIcon && unmutedIcon) {
   });
 }
 
-// Refresh (reset flow + restart video loop) — NO black flash
-if (video && refreshBtn) {
+// Refresh (reset conversation)
+if (refreshBtn) {
   refreshBtn.addEventListener("click", () => {
     resetForm();
 
-    const wasPaused = video.paused;
-
-    // rewind without reloading (prevents black flash)
-    video.currentTime = 0;
-
-    // if it was playing, keep it playing
-    if (!wasPaused) {
-      video.play().catch(() => {});
+    if (video) {
+      const wasPaused = video.paused;
+      video.currentTime = 0;
+      if (!wasPaused) video.play().catch(() => {});
     }
   });
 }
@@ -424,15 +565,10 @@ if (langBtn) {
   langBtn.addEventListener("click", () => {
     isSpanish = !isSpanish;
     applyLanguage();
-  });
-}
 
-// Phone formatting (UI-only)
-if (phoneEl) {
-  phoneEl.addEventListener("input", (e) => {
-    let v = e.target.value.replace(/\D/g, "").slice(0, 10);
-    if (v.length >= 6) v = "(" + v.slice(0, 3) + ") " + v.slice(3, 6) + "-" + v.slice(6);
-    else if (v.length >= 3) v = "(" + v.slice(0, 3) + ") " + v.slice(3);
-    e.target.value = v;
+    // Restart conversation in new language if widget is open
+    if (widget && !widget.classList.contains("is-hidden")) {
+      resetForm();
+    }
   });
 }
