@@ -224,8 +224,11 @@ body{
 
 /* chat content */
 .chat-content{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   position:absolute;
-  bottom:0; left:0; right:0;
+  bottom: 0; left:0; right:0;
   padding:20px;
   z-index:5;
   max-height:55%;
@@ -342,13 +345,14 @@ textarea.form-input{
 
 /* footer */
 .footer{
-  position:absolute;
+  position: absolute;
   bottom:8px;
   left:0; right:0;
-  text-align:center;
-  z-index:10;
+  text-align: center;
+  z-index: 10;
   color: rgba(255,255,255,0.60);
-  font-size:11px;
+  font-size: 12px;
+  opacity: 0.8;
 }
 
 /* mobile */
@@ -368,4 +372,161 @@ textarea.form-input{
     left: 84px;
     bottom: 26px;
   }
+}
+
+/* =========================
+   INLINE BACK ARROW (FINAL)
+   ========================= */
+
+/* Row holding arrow + input */
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+/* Stack for name fields */
+.input-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+/* Back arrow button */
+.back-arrow {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: none;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.back-arrow:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+/* Ensure inputs stay full width */
+.input-row .form-input {
+  flex: 1;
+}
+
+/* =========================
+   Back arrow inside message
+   ========================= */
+
+.message-with-back {
+  position: relative;
+  padding-left: 42px; /* make room for arrow */
+}
+
+/* Inline back arrow */
+.back-arrow-inline {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  border: none;
+  background: none;
+  padding: 0;
+
+  color: #ef4444; /* subtle red like your sketch */
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.back-arrow-inline:hover {
+  opacity: 0.75;
+}
+
+/* =========================
+   INLINE BACK ARROW (FINAL)
+   ========================= */
+
+.message-with-back{
+  position: relative;
+  padding-left: 36px; /* makes room for arrow */
+}
+
+/* the arrow itself */
+.back-arrow-inline{
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  background: none;
+  border: none;
+  padding: 0;
+
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1;
+
+  color: #fff;
+  cursor: pointer;
+}
+
+/* never show back arrow on step 1 */
+#step1 .back-arrow-inline{
+  display: none !important;
+}
+
+/* =========================
+   MESSAGE CENTERING (steps)
+   ========================= */
+.message{
+  text-align: center;
+}
+
+/* =========================
+   INLINE BACK ARROW (FORCED)
+   ========================= */
+.message-with-back{
+  position: relative;
+  padding-left: 44px;      /* room for arrow */
+  text-align: center;      /* keep message text centered */
+}
+
+/* force the arrow to exist + be clickable */
+.message-with-back .back-arrow-inline{
+  display: inline-block !important;
+
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  background: rgba(255,255,255,0.10);
+  border: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+
+  cursor: pointer;
+  z-index: 20;
+}
+
+.message-with-back .back-arrow-inline:hover{
+  background: rgba(255,255,255,0.18);
+}
+
+/* never show arrow on step 1 */
+#step1 .back-arrow-inline{
+  display: none !important;
 }

@@ -73,7 +73,6 @@
         </div>
 
         <div class="controls-right">
-          <!-- NOTE: if you want refresh left of lang, swap these two buttons in HTML OR use CSS order -->
           <button class="lang-btn" id="langBtn" type="button">Español</button>
           <button class="control-btn" id="refreshBtn" type="button" title="Start Over">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,6 +84,8 @@
       </div>
 
       <div class="chat-content">
+
+        <!-- STEP 1 -->
         <div class="step active" id="step1">
           <div class="message" id="step1Msg">
             Hi 👋 Welcome to Singleton Law Firm. What kind of matter can we assist you with?
@@ -100,37 +101,66 @@
           </div>
         </div>
 
+        <!-- STEP 2 -->
         <div class="step" id="step2">
-          <button class="back-btn" id="back2" type="button" onclick="goBack(1)">← Back</button>
-          <div class="message" id="step2Msg">Could you briefly explain the situation for me?</div>
+          <div class="message message-with-back" id="step2Msg">
+            <button class="back-arrow-inline" type="button" aria-label="Go back" onclick="goBack(1)">‹</button>
+            Could you briefly explain the situation for me?
+          </div>
+
           <div class="form-group">
             <textarea class="form-input" id="description" placeholder="Describe what happened..."></textarea>
           </div>
+
           <button class="submit-btn" id="continue2" type="button" onclick="submitDescription()">Continue</button>
         </div>
 
+        <!-- STEP 3 -->
         <div class="step" id="step3">
-          <button class="back-btn" id="back3" type="button" onclick="goBack(2)">← Back</button>
-          <div class="message" id="step3Msg">This will be quick—what's your full name?</div>
-          <div class="form-group"><input type="text" class="form-input" id="firstName" placeholder="First Name"></div>
-          <div class="form-group"><input type="text" class="form-input" id="lastName" placeholder="Last Name"></div>
+          <div class="message message-with-back" id="step3Msg">
+            <button class="back-arrow-inline" type="button" aria-label="Go back" onclick="goBack(2)">‹</button>
+            This will be quick—what's your full name?
+          </div>
+
+          <div class="form-group">
+            <input type="text" class="form-input" id="firstName" placeholder="First Name">
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-input" id="lastName" placeholder="Last Name">
+          </div>
+
           <button class="submit-btn" id="continue3" type="button" onclick="submitName()">Continue</button>
         </div>
 
+        <!-- STEP 4 -->
         <div class="step" id="step4">
-          <button class="back-btn" id="back4" type="button" onclick="goBack(3)">← Back</button>
-          <div class="message" id="step4Msg">In case we get disconnected, can I have your phone number please?</div>
-          <div class="form-group"><input type="tel" class="form-input" id="phone" placeholder="(555) 555-5555"></div>
+          <div class="message message-with-back" id="step4Msg">
+            <button class="back-arrow-inline" type="button" aria-label="Go back" onclick="goBack(3)">‹</button>
+            In case we get disconnected, can I have your phone number please?
+          </div>
+
+          <div class="form-group">
+            <input type="tel" class="form-input" id="phone" placeholder="(555) 555-5555">
+          </div>
+
           <button class="submit-btn" id="continue4" type="button" onclick="submitPhone()">Continue</button>
         </div>
 
+        <!-- STEP 5 -->
         <div class="step" id="step5">
-          <button class="back-btn" id="back5" type="button" onclick="goBack(4)">← Back</button>
-          <div class="message" id="step5Msg">And what's the best email to reach you at?</div>
-          <div class="form-group"><input type="email" class="form-input" id="email" placeholder="your@email.com"></div>
+          <div class="message message-with-back" id="step5Msg">
+            <button class="back-arrow-inline" type="button" aria-label="Go back" onclick="goBack(4)">‹</button>
+            And what's the best email to reach you at?
+          </div>
+
+          <div class="form-group">
+            <input type="email" class="form-input" id="email" placeholder="your@email.com">
+          </div>
+
           <button class="submit-btn" id="finalSubmit" type="button" onclick="submitForm()">Submit</button>
         </div>
 
+        <!-- STEP 6 -->
         <div class="step" id="step6">
           <div class="message">
             <div class="success-message">
@@ -140,6 +170,7 @@
             </div>
           </div>
         </div>
+
       </div>
 
       <div class="footer">Powered by Rizo</div>

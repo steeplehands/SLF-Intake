@@ -1,6 +1,6 @@
 /* =========================
    Singleton Intake Widget
-   script.js (clean working)
+   script.js (fixed: preserves back arrow + centered messages)
    ========================= */
 
 // -------------------------
@@ -52,31 +52,27 @@ const finalSubmitBtn = document.getElementById("finalSubmit");
 // -------------------------
 const i18n = {
   en: {
-    // Tooltip + language button label
     tooltip: "How can I help you?",
     langBtnLabel: "Español",
 
-    // Step messages
     step1Msg: "Hi 👋 Welcome to Singleton Law Firm. What kind of matter can we assist you with?",
     step2Msg: "Could you briefly explain the situation for me?",
     step3Msg: "This will be quick—what's your full name?",
     step4Msg: "In case we get disconnected, can I have your phone number please?",
     step5Msg: "And what's the best email to reach you at?",
 
-    // Buttons
+    // (kept for compatibility, even if you no longer show "Back" text)
     back: "← Back",
     continue: "Continue",
     submit: "Submit",
     submitting: "Submitting...",
 
-    // Placeholders
     description_ph: "Describe what happened...",
     firstName_ph: "First Name",
     lastName_ph: "Last Name",
     phone_ph: "(555) 555-5555",
     email_ph: "your@email.com",
 
-    // Options (step 1)
     optCar: "Car Accident",
     optMotorcycle: "Motorcycle Accident",
     optTruck: "Truck Accident",
@@ -85,7 +81,6 @@ const i18n = {
     optSlip: "Slip & Fall",
     optPersonalInjury: "Personal Injury (All kinds)",
 
-    // Success
     successTitle: "Thank You!",
     successBody: "We've received your information. Someone from Singleton Law Firm will contact you shortly."
   },
@@ -128,6 +123,27 @@ function t(key) {
 }
 
 // -------------------------
+// Language helpers (preserve inline back arrow button)
+// -------------------------
+function setMessagePreserveBack(el, text) {
+  if (!el) return;
+
+  // If your HTML uses the inline button inside the message bubble:
+  // <div class="message message-with-back" id="step2Msg">
+  //   <button class="back-arrow-inline">‹</button>
+  //   ...
+  // </div>
+  const backBtn = el.querySelector(".back-arrow-inline");
+
+  // Clear without nuking the button reference
+  el.textContent = "";
+
+  // Re-append button first, then text
+  if (backBtn) el.appendChild(backBtn);
+  el.appendChild(document.createTextNode(text));
+}
+
+// -------------------------
 // Language apply
 // -------------------------
 function applyLanguage() {
@@ -141,7 +157,7 @@ function applyLanguage() {
   // Language button label
   if (langBtn) langBtn.textContent = t("langBtnLabel");
 
-  // Step messages
+  // Step messages (IMPORTANT: preserve back arrow button inside message bubbles)
   const step1Msg = document.getElementById("step1Msg");
   const step2Msg = document.getElementById("step2Msg");
   const step3Msg = document.getElementById("step3Msg");
@@ -149,21 +165,10 @@ function applyLanguage() {
   const step5Msg = document.getElementById("step5Msg");
 
   if (step1Msg) step1Msg.textContent = t("step1Msg");
-  if (step2Msg) step2Msg.textContent = t("step2Msg");
-  if (step3Msg) step3Msg.textContent = t("step3Msg");
-  if (step4Msg) step4Msg.textContent = t("step4Msg");
-  if (step5Msg) step5Msg.textContent = t("step5Msg");
-
-  // Back buttons
-  const back2 = document.getElementById("back2");
-  const back3 = document.getElementById("back3");
-  const back4 = document.getElementById("back4");
-  const back5 = document.getElementById("back5");
-
-  if (back2) back2.textContent = t("back");
-  if (back3) back3.textContent = t("back");
-  if (back4) back4.textContent = t("back");
-  if (back5) back5.textContent = t("back");
+  setMessagePreserveBack(step2Msg, t("step2Msg"));
+  setMessagePreserveBack(step3Msg, t("step3Msg"));
+  setMessagePreserveBack(step4Msg, t("step4Msg"));
+  setMessagePreserveBack(step5Msg, t("step5Msg"));
 
   // Continue buttons
   const continue2 = document.getElementById("continue2");
@@ -229,7 +234,7 @@ function showStep(step) {
   if (target) target.classList.add("active");
   currentStep = step;
 
-  // keep language correct as user advances
+  // keep language correct as user advances (also preserves back buttons)
   applyLanguage();
 }
 
@@ -244,7 +249,6 @@ function openWidget() {
   if (launcher) launcher.style.display = "none";
   if (tooltip) tooltip.classList.add("is-hidden");
 
-  // try to play video if allowed
   if (video && video.paused) video.play().catch(() => {});
 }
 
@@ -398,7 +402,6 @@ if (muteBtn && video && mutedIcon && unmutedIcon) {
   });
 }
 
-// Refresh (reset flow + restart video loop)
 // Refresh (reset flow + restart video loop) — NO black flash
 if (video && refreshBtn) {
   refreshBtn.addEventListener("click", () => {
@@ -415,7 +418,6 @@ if (video && refreshBtn) {
     }
   });
 }
-
 
 // Language toggle
 if (langBtn) {
