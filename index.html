@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Singleton Law Firm Intake</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css?v=1"/>
+</head>
+
+<body>
+
+  <!-- Round launcher bubble -->
+  <button id="intakeLauncher" class="intake-launcher" type="button" aria-label="Open intake">
+    <img
+      class="launcher-avatar"
+      src="https://storage.googleapis.com/msgsndr/auZVaoSosuyK3y7NwfVh/media/696e8cf9c7f17f07ccc944e3.mp4"
+      alt="Don Singleton"
+    />
+  </button>
+
+  <!-- Tooltip bubble -->
+  <div id="intakeTooltip" class="intake-tooltip" role="button" aria-label="Open intake">
+    <span class="tooltip-emoji wave">👋</span>
+    <span class="tooltip-text">How can I help you?</span>
+  </div>
+
+  <!-- Widget wrapper -->
+  <div id="intakeWidget" class="intake-widget is-hidden" role="dialog" aria-label="Intake form">
+    <button id="intakeClose" class="intake-close" type="button" aria-label="Close">✕</button>
+
+    <div class="intake-container">
+
+      <video class="video-bg" id="bgVideo" autoplay loop muted playsinline>
+        <source src="https://storage.googleapis.com/msgsndr/auZVaoSosuyK3y7NwfVh/media/696e8cf9c7f17f07ccc944e3.mp4" type="video/mp4">
+      </video>
+
+      <div class="overlay"></div>
+
+      <div class="mute-indicator" id="muteIndicator" aria-hidden="true">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+        </svg>
+      </div>
+
+      <div class="controls">
+        <div class="controls-left">
+          <button class="control-btn" id="playPauseBtn" type="button" title="Play/Pause">
+            <svg id="pauseIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6" />
+            </svg>
+            <svg id="playIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none;">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+            </svg>
+          </button>
+
+          <button class="control-btn" id="muteBtn" type="button" title="Mute/Unmute">
+            <svg id="mutedIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+            </svg>
+            <svg id="unmutedIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none;">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="controls-right">
+          <!-- NOTE: if you want refresh left of lang, swap these two buttons in HTML OR use CSS order -->
+          <button class="lang-btn" id="langBtn" type="button">Español</button>
+          <button class="control-btn" id="refreshBtn" type="button" title="Start Over">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="chat-content">
+        <div class="step active" id="step1">
+          <div class="message" id="step1Msg">
+            Hi 👋 Welcome to Singleton Law Firm. What kind of matter can we assist you with?
+          </div>
+          <div class="options">
+            <button id="optCar" class="option-btn" type="button" onclick="selectCaseType('Car Accident')"><span class="radio-circle"></span>Car Accident</button>
+            <button id="optMotorcycle" class="option-btn" type="button" onclick="selectCaseType('Motorcycle Accident')"><span class="radio-circle"></span>Motorcycle Accident</button>
+            <button id="optTruck" class="option-btn" type="button" onclick="selectCaseType('Truck Accident')"><span class="radio-circle"></span>Truck Accident</button>
+            <button id="optWrongful" class="option-btn" type="button" onclick="selectCaseType('Wrongful Death')"><span class="radio-circle"></span>Wrongful Death</button>
+            <button id="optBus" class="option-btn" type="button" onclick="selectCaseType('Bus Accident')"><span class="radio-circle"></span>Bus Accident</button>
+            <button id="optSlip" class="option-btn" type="button" onclick="selectCaseType('Slip & Fall')"><span class="radio-circle"></span>Slip & Fall</button>
+            <button id="optPersonalInjury" class="option-btn" type="button" onclick="selectCaseType('Personal Injury (All kinds)')"><span class="radio-circle"></span>Personal Injury (All kinds)</button>
+          </div>
+        </div>
+
+        <div class="step" id="step2">
+          <button class="back-btn" id="back2" type="button" onclick="goBack(1)">← Back</button>
+          <div class="message" id="step2Msg">Could you briefly explain the situation for me?</div>
+          <div class="form-group">
+            <textarea class="form-input" id="description" placeholder="Describe what happened..."></textarea>
+          </div>
+          <button class="submit-btn" id="continue2" type="button" onclick="submitDescription()">Continue</button>
+        </div>
+
+        <div class="step" id="step3">
+          <button class="back-btn" id="back3" type="button" onclick="goBack(2)">← Back</button>
+          <div class="message" id="step3Msg">This will be quick—what's your full name?</div>
+          <div class="form-group"><input type="text" class="form-input" id="firstName" placeholder="First Name"></div>
+          <div class="form-group"><input type="text" class="form-input" id="lastName" placeholder="Last Name"></div>
+          <button class="submit-btn" id="continue3" type="button" onclick="submitName()">Continue</button>
+        </div>
+
+        <div class="step" id="step4">
+          <button class="back-btn" id="back4" type="button" onclick="goBack(3)">← Back</button>
+          <div class="message" id="step4Msg">In case we get disconnected, can I have your phone number please?</div>
+          <div class="form-group"><input type="tel" class="form-input" id="phone" placeholder="(555) 555-5555"></div>
+          <button class="submit-btn" id="continue4" type="button" onclick="submitPhone()">Continue</button>
+        </div>
+
+        <div class="step" id="step5">
+          <button class="back-btn" id="back5" type="button" onclick="goBack(4)">← Back</button>
+          <div class="message" id="step5Msg">And what's the best email to reach you at?</div>
+          <div class="form-group"><input type="email" class="form-input" id="email" placeholder="your@email.com"></div>
+          <button class="submit-btn" id="finalSubmit" type="button" onclick="submitForm()">Submit</button>
+        </div>
+
+        <div class="step" id="step6">
+          <div class="message">
+            <div class="success-message">
+              <div class="success-icon">✓</div>
+              <h3 class="success-title" id="successTitle">Thank You!</h3>
+              <p id="successBody">We've received your information. Someone from Singleton Law Firm will contact you shortly.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">Powered by Rizo</div>
+    </div>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
